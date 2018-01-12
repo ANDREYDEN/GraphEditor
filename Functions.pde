@@ -22,28 +22,28 @@ Node other(Node n, Edge e) {
 }
 
 Node EulerPath(Node cur) {
-  delay(500);
-  boolean check = false;
-  cur.used = true;
+  delay(algItDelay);
+  cur.used = 1;
+  
   for (Edge e : f.edges) {
     Node to = other(cur, e);
-    if (to != null) {
-      if (!to.used) {
-        println(to.num);
-        to.parent = cur;  
-        check = true;
-        e.visible = false;
-        return to;
-      } else if (e.visible) {
-        e.visible = false;
-        return cur;
-      }
+    if (to != null && to.used == 0) {
+      println(to.num);
+      to.parent = cur;
+      e.visible = false;
+      return to;
     }
   } 
-  if (!check) 
-    if (cur.parent != null)
-      return cur.parent;
-    else
-      return null;
-  return null;
+  for (Edge e : f.edges) {
+    Node to = other(cur, e);
+    if (to != null && e.visible) {
+      e.visible = false;
+      return cur;
+    }
+  }
+  if (cur.parent != null && cur.parent.used == 1) {
+    cur.used = 2;
+    return cur.parent;
+  } else
+    return null;
 }

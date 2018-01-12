@@ -29,7 +29,7 @@ class Field {
 
   void clearNodeUsage() {
     for (Node n : nodes)
-      n.used = false;
+      n.used = 0;
   }
 
   void visEdges() {
