@@ -1,17 +1,20 @@
 class Field {
   ArrayList<Node> nodes;
   ArrayList<Edge> edges;
+  boolean[][] adj;
   Node active;
   boolean[] freeNum;
 
   Field() {
     nodes = new ArrayList<Node>();
     edges = new ArrayList<Edge>();
+    adj = new boolean[maxn][maxn];
     active = null;
     freeNum = new boolean[maxn];
   }
 
   void create() {
+    //find a free number
     int ind = 1;
     for (int i = 1; i < maxn; i++)
       if (!freeNum[i]) {
@@ -21,10 +24,6 @@ class Field {
     Node n = new Node(Node_rad, ind);
     freeNum[ind] = true;
     nodes.add(n);
-    if (active != null)
-      active.act = false;
-    active = n;
-    n.act = true;
   }
 
   void clearNodeUsage() {
@@ -39,38 +38,39 @@ class Field {
 
   void relate() {
     for (Node n1 : nodes)
-      for (Node n2 : nodes) {
-        float dist = PVector.dist(n1.pos, n2.pos);
-        if (n1 != n2 && dist < crit_relation) {
-          //for every 2 distinct nodes 
-          //separate them, if they are too close
-          sep(n1, n2);
+      for (Node n2 : nodes) 
+        if (n1 != n2) {
+          //for every 2 distinct nodes separate them
+          boolean e = adj[n1.num][n2.num];
+          PVector f = n1.relate(n2, e);
+          n1.appForce(f);
+          n2.appForce(f.mult(-1));
         }
-      }
 
     //separate every node from edges
     for (Node n : nodes) {
-      if (n.pos.x < crit_relation) 
-        sep(n, new PVector(0, n.pos.y));
-      if (n.pos.y < crit_relation)
-        sep(n, new PVector(n.pos.x, 0));
-      if (W - n.pos.x < crit_relation)
-        sep(n, new PVector(W, n.pos.y));
-      if (W - n.pos.y < crit_relation) 
-        sep(n, new PVector(n.pos.x, W));
+      //don't let nodes to escape the box
+      if (n.pos.x < n.r)
+        n.pos.x = n.r;
+      if (n.pos.y < n.r)
+        n.pos.y = n.r;
+      if (n.pos.x > W - n.r)
+        n.pos.x = W - n.r;
+      if (n.pos.y > W - n.r)
+        n.pos.y = W - n.r;
     }
   }
 
   void update() {
-    relate();
     for (Edge e : edges)
       e.show();
     for (Node n : nodes) {
       n.show();
       n.move();
     }
+    relate();
   }
-  
+
   void consLogEdges() {
     for (Edge e : edges) 
       println(e.A.num + " " + e.B.num);  

@@ -25,19 +25,49 @@ class Node {
     acc.mult(0);
   }
 
+  PVector relate(Node n, boolean e) {
+    PVector f = new PVector(0, 0);
+    float dist = PVector.dist(pos, n.pos);
+
+    if (!e) {
+      if (dist < relation_dist) {
+        f = PVector.sub(pos, n.pos);
+        f.normalize();
+
+        //if nodes are too close constrain the distance
+        if (dist < crit_relation)
+          dist = crit_relation;
+
+        f.mult(relation_power/(dist*dist));
+        //if nodes ideally overlap, move them a bit
+        f.add(deltaF);
+      } 
+    } else {
+        f = PVector.sub(n.pos, pos);
+        f.normalize();
+
+        f.mult(relation_power/(dist*dist));
+        if (dist < des_edge_len)
+          f.mult(-1);
+        else if (abs(des_edge_len - dist) < 10)
+          f.mult(0);
+    }
+    return f;
+  }
+
   void show() {
     if (act) {
       strokeWeight(str_weight_out_node);
       stroke(out_Node_col);
     } else
       noStroke();
-      
+
     fill(in_Node_col);
     if (this.used == 1)
       fill(used1_Node_col);
     else if (this.used == 2)
       fill(used2_Node_col);
-      
+
     ellipse(pos.x, pos.y, r, r);
     fill(text_col);
     text(num, pos.x - text_size/2, pos.y + text_size/4);
