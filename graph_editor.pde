@@ -1,11 +1,12 @@
 int W, maxn, Node_rad, relation_dist, crit_relation, text_size;
-int str_weight_out_node, str_weight_edge, algItDelay, des_edge_len;
+int str_weight_out_node, str_weight_edge, alg_it_delay, des_edge_len;
 float relation_power;
 color in_Node_col, out_Node_col, used1_Node_col, used2_Node_col;
 color edge_col, field_col, text_col;
 PVector deltaF;
-Node place;
 boolean Euler_enable;
+IntList EuAns;
+int EuIt;
 Field f;
 
 void setup() {
@@ -30,26 +31,28 @@ void setup() {
   field_col = text_col = color(0);
   deltaF = new PVector(0, 1);
   Euler_enable = false;
-  algItDelay = 1200;
-  place = null;
-
+  alg_it_delay = 1200;
+  EuIt = 0;
   f = new Field();
   textSize(text_size);
 }
 
 void draw() {
-
   if (Euler_enable) {
-    if (place == null) {
-      //if the end of alg is reached put back all the edges
+    //remove an edge from the answer
+    int from = EuAns.get(EuIt);
+    int to = EuAns.get(EuIt+1);
+    EuIt++;
+    f.adj[from][to].visible = false;
+    delay(alg_it_delay);
+
+    //renew graph, if alg finished
+    if (EuIt == EuAns.size()-1) {
       Euler_enable = false;
       f.visEdges();
       f.clearNodeUsage();
-    } else {
-      place.act = false;
-      place = EulerPath(place);
-      if (place != null)
-        place.act = true;
+      EuIt = 0;
+      EuAns.clear();
     }
   }
 
@@ -59,20 +62,20 @@ void draw() {
 
 void keyPressed() {
   if (key == 'e') {
-    Euler_enable = true;
-    //enable Euler pathfinding animation and choose a node to start
-    place = f.nodes.get(0);
-    for (Node n : f.nodes)
-      if (n.act)
-        place = n;
-    //print the first element of the path
-    println(place.num);
+    //find the path (cycle) and enable Euler pathfinding animation
+    Node st = EulerStart();
+    if (st != null) {
+      EuAns = new IntList();
+      EulerPath(st);
+      Euler_enable = true;
+      f.visEdges();
+    }
   } else if (key == DELETE) {
     //delete a node and all involved edges
     Node out = f.active;
 
     if (out != null) {
-      f.freeNum[out.num] = false;
+      f.invNum[out.num] = false;
       f.nodes.remove(out);
       f.active = null;
       ArrayList<Edge> removed = new ArrayList<Edge>();
@@ -103,12 +106,13 @@ void mousePressed() {
 
         //if the same edge allready exists delete it
         if (copy == null) {
-          f.adj[f.active.num][cur.num] = true;
-          f.adj[cur.num][f.active.num] = true;
-          f.edges.add(new Edge(0, f.active, cur));
+          Edge e = new Edge(0, f.active, cur);
+          f.adj[f.active.num][cur.num] = e;
+          f.adj[cur.num][f.active.num] = e;
+          f.edges.add(e);
         } else {
-          f.adj[f.active.num][cur.num] = false;
-          f.adj[cur.num][f.active.num] = false;
+          f.adj[f.active.num][cur.num] = null;
+          f.adj[cur.num][f.active.num] = null;
           f.edges.remove(copy);
         }  
 

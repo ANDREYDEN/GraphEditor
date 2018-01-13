@@ -7,29 +7,36 @@ Node other(Node n, Edge e) {
     return null;
 }
 
-Node EulerPath(Node cur) {
-  delay(algItDelay);
-  cur.used = 1;
-
-  for (Edge e : f.edges) {
-    Node to = other(cur, e);
-    if (to != null && to.used == 0) {
-      println(to.num);
-      to.parent = cur;
-      e.visible = false;
-      return to;
+Node EulerStart() {
+  int cnt = 0;
+  int ans = -1;
+  for (int i = 1; i < maxn; i++) {
+    int c = 0;
+    for (int j = 1; j < maxn; j++)
+      if (f.adj[i][j] != null)
+        c++;
+    if (c%2 == 1) {
+      ans = i;
+      cnt++;
     }
-  } 
+  }
+  if (cnt == 0)
+    return f.nodes.get(0);
+  if (cnt == 2)
+    for (Node n : f.nodes)
+      if (n.num == ans)
+        return n;
+  return null;
+}
+
+void EulerPath(Node cur) {
   for (Edge e : f.edges) {
     Node to = other(cur, e);
     if (to != null && e.visible) {
       e.visible = false;
-      return cur;
+      EulerPath(to);
     }
   }
-  if (cur.parent != null && cur.parent.used == 1) {
-    cur.used = 2;
-    return cur.parent;
-  } else
-    return null;
+  EuAns.append(cur.num);
+  println(cur.num);
 }

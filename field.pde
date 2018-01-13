@@ -1,28 +1,28 @@
 class Field {
   ArrayList<Node> nodes;
   ArrayList<Edge> edges;
-  boolean[][] adj;
+  Edge[][] adj;
   Node active;
-  boolean[] freeNum;
+  boolean[] invNum;
 
   Field() {
     nodes = new ArrayList<Node>();
     edges = new ArrayList<Edge>();
-    adj = new boolean[maxn][maxn];
+    adj = new Edge[maxn][maxn];
     active = null;
-    freeNum = new boolean[maxn];
+    invNum = new boolean[maxn];
   }
 
   void create() {
     //find a free number
     int ind = 1;
     for (int i = 1; i < maxn; i++)
-      if (!freeNum[i]) {
+      if (!invNum[i]) {
         ind = i;
         break;
       }
     Node n = new Node(Node_rad, ind);
-    freeNum[ind] = true;
+    invNum[ind] = true;
     nodes.add(n);
   }
 
@@ -41,7 +41,7 @@ class Field {
       for (Node n2 : nodes) 
         if (n1 != n2) {
           //for every 2 distinct nodes separate them
-          boolean e = adj[n1.num][n2.num];
+          boolean e = (adj[n1.num][n2.num] != null);
           PVector f = n1.relate(n2, e);
           n1.appForce(f);
           n2.appForce(f.mult(-1));
