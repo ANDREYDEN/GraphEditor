@@ -21,7 +21,10 @@ class Node {
 
   void move() {
     vel.add(acc);
-    pos.add(vel);
+    //pos.add(vel);
+    //PVector wanted = PVector.add(pos, vel);
+    //pos.set(lerp(pos.x, wanted.x, 0.3), lerp(pos.y, wanted.y, 0.3));
+    pos.lerp(PVector.add(pos, vel), 0.3);
     acc.mult(0);
   }
 
