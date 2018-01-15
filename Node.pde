@@ -43,13 +43,12 @@ class Node {
         f.add(deltaF);
       } 
     } else {
-        f = PVector.sub(n.pos, pos);
+        f = PVector.sub(pos, n.pos);
         f.normalize();
-
-        f.mult(relation_power/(dist*dist));
-        if (dist < des_edge_len)
-          f.mult(-1);
-        else if (abs(des_edge_len - dist) < 10)
+        f.mult(spring_coef*(des_edge_len - dist));
+        
+        //delta, in wich nodes do not relate
+        if (abs(des_edge_len - dist) < 2)
           f.mult(0);
     }
     return f;

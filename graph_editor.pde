@@ -1,6 +1,6 @@
 int W, maxn, Node_rad, relation_dist, crit_relation, text_size;
 int str_weight_out_node, str_weight_edge, alg_it_delay, des_edge_len;
-float relation_power;
+float relation_power, spring_coef;
 color in_Node_col, out_Node_col, used1_Node_col, used2_Node_col;
 color edge_col, field_col, text_col;
 PVector deltaF;
@@ -21,6 +21,7 @@ void setup() {
   des_edge_len = 100;
   text_size = 15;
   relation_power = 2000;
+  spring_coef = 0.005;
   in_Node_col = color(255, 255, 0);
   out_Node_col = color(255, 0, 0);
   used1_Node_col = color(175, 175, 0);
@@ -55,6 +56,10 @@ void draw() {
       EuAns.clear();
     }
   }
+
+  if (mousePressed)
+    if (f.dragged != null)
+      f.dragged.pos.set(mouseX, mouseY);
 
   background(field_col);
   f.update();
@@ -94,43 +99,28 @@ void mousePressed() {
   Node cur = f.checkOverlap();
 
   //if anything is being dragged - trace it
-  if (cur != null) 
-    if (f.active != null) {
+  if (cur != null) { 
+    if (f.active == cur) {
+      //if the node was pressed twice
+      f.active.act = false;
+      f.active = null;
+    } else if (f.active != null) {
       //if smth was active, create a new edge
-      if (cur != f.active) {
-        Edge copy = null;
-
-        for (Edge e : f.edges)
-          if (other(cur, e) == f.active)
-            copy = e;
-
-        //if the same edge allready exists delete it
-        if (copy == null) {
-          Edge e = new Edge(0, f.active, cur);
-          f.adj[f.active.num][cur.num] = e;
-          f.adj[cur.num][f.active.num] = e;
-          f.edges.add(e);
-        } else {
-          f.adj[f.active.num][cur.num] = null;
-          f.adj[cur.num][f.active.num] = null;
-          f.edges.remove(copy);
-        }  
-
-        //do the active node inactive
-        f.active.act = false;
-        f.active = null;
-      }
+      f.changeEdge(f.active, cur);
+      f.active.act = false;
+      f.active = null;
     } else {
       //else make curent node active
       f.active = cur;
       cur.act = true;
     }
+    f.dragged = cur;
+  }
 
-  if (mouseButton == RIGHT)
-    f.create();
+  if (mouseButton == RIGHT) 
+    f.createNode();
 }
 
-void mouseDragged() {
-  if (f.active != null)
-    f.active.pos.set(mouseX, mouseY);
+void mouseReleased() {
+  f.dragged = null;
 }

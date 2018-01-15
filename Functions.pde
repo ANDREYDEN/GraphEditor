@@ -10,7 +10,7 @@ Node other(Node n, Edge e) {
 Node EulerStart() {
   int cnt = 0;
   int ans = -1;
-  for (int i = 1; i < maxn; i++) {
+  for (int i = 1; i < maxn && cnt < 3; i++) {
     int c = 0;
     for (int j = 1; j < maxn; j++)
       if (f.adj[i][j] != null)

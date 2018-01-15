@@ -2,18 +2,18 @@ class Field {
   ArrayList<Node> nodes;
   ArrayList<Edge> edges;
   Edge[][] adj;
-  Node active;
+  Node active, dragged;
   boolean[] invNum;
 
   Field() {
     nodes = new ArrayList<Node>();
     edges = new ArrayList<Edge>();
     adj = new Edge[maxn][maxn];
-    active = null;
+    active = dragged = null;
     invNum = new boolean[maxn];
   }
 
-  void create() {
+  void createNode() {
     //find a free number
     int ind = 1;
     for (int i = 1; i < maxn; i++)
@@ -24,6 +24,25 @@ class Field {
     Node n = new Node(Node_rad, ind);
     invNum[ind] = true;
     nodes.add(n);
+  }
+  
+  void changeEdge(Node u, Node v) {
+    Edge copy = null;
+    for (Edge e : f.edges)
+        if (other(u, e) == v)
+          copy = e;
+
+      if (copy == null) {
+        Edge e = new Edge(0, u, v);
+        f.adj[v.num][u.num] = e;
+        f.adj[u.num][v.num] = e;
+        f.edges.add(e);
+      } else {
+        //if the same edge allready exists delete it
+        f.adj[v.num][u.num] = null;
+        f.adj[u.num][v.num] = null;
+        f.edges.remove(copy);
+      }
   }
 
   void clearNodeUsage() {
