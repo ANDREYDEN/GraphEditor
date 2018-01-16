@@ -25,24 +25,22 @@ class Field {
     invNum[ind] = true;
     nodes.add(n);
   }
-  
+
   void changeEdge(Node u, Node v) {
     Edge copy = null;
-    for (Edge e : f.edges)
-        if (other(u, e) == v)
-          copy = e;
+    for (Edge e : edges)
+      if (other(u, e) == v)
+        copy = e;
 
-      if (copy == null) {
-        Edge e = new Edge(0, u, v);
-        f.adj[v.num][u.num] = e;
-        f.adj[u.num][v.num] = e;
-        f.edges.add(e);
-      } else {
-        //if the same edge allready exists delete it
-        f.adj[v.num][u.num] = null;
-        f.adj[u.num][v.num] = null;
-        f.edges.remove(copy);
-      }
+    if (copy == null) {
+      Edge e = new Edge(0, u, v);
+      adj[v.num][u.num] = adj[u.num][v.num] = e;
+      edges.add(e);
+    } else {
+      //if the same edge allready exists delete it
+      adj[v.num][u.num] = adj[u.num][v.num] = null;
+      edges.remove(copy);
+    }
   }
 
   void clearNodeUsage() {

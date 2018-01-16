@@ -40,3 +40,13 @@ void EulerPath(Node cur) {
   EuAns.append(cur.num);
   println(cur.num);
 }
+
+void checkFlash() {
+ if (flash == 1) {
+      background(flash_col);
+      flash = 2;
+  } else if (flash == 2) {
+    flash = 0;
+    delay(flash_time);
+  }
+}

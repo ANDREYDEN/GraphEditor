@@ -2,11 +2,11 @@ int W, maxn, Node_rad, relation_dist, crit_relation, text_size;
 int str_weight_out_node, str_weight_edge, alg_it_delay, des_edge_len;
 float relation_power, spring_coef;
 color in_Node_col, out_Node_col, used1_Node_col, used2_Node_col;
-color edge_col, field_col, text_col;
+color edge_col, field_col, text_col, flash_col;
 PVector deltaF;
 boolean Euler_enable;
 IntList EuAns;
-int EuIt;
+int EuIt, flash, flash_time;
 Field f;
 
 void setup() {
@@ -30,31 +30,33 @@ void setup() {
   str_weight_edge = 4;
   edge_col = color(50, 100, 200);
   field_col = text_col = color(0);
+  flash_col = color(255, 0, 0);
   deltaF = new PVector(0, 1);
   Euler_enable = false;
   alg_it_delay = 1200;
-  EuIt = 0;
+  EuIt = flash = 0;
+  flash_time = 10;
   f = new Field();
   textSize(text_size);
 }
 
 void draw() {
   if (Euler_enable) {
-    //remove an edge from the answer
-    int from = EuAns.get(EuIt);
-    int to = EuAns.get(EuIt+1);
-    EuIt++;
-    f.adj[from][to].visible = false;
-    delay(alg_it_delay);
-
     //renew graph, if alg finished
-    if (EuIt == EuAns.size()-1) {
+    if (EuIt == EuAns.size()-1 || EuAns.size() == 1) {
       Euler_enable = false;
       f.visEdges();
       f.clearNodeUsage();
       EuIt = 0;
       EuAns.clear();
+    } else {
+      //remove an edge from the answer
+      int from = EuAns.get(EuIt);
+      int to = EuAns.get(EuIt+1);
+      EuIt++;
+      f.adj[from][to].visible = false;
     }
+    delay(alg_it_delay);
   }
 
   if (mousePressed)
@@ -62,11 +64,12 @@ void draw() {
       f.dragged.pos.set(mouseX, mouseY);
 
   background(field_col);
+  checkFlash();
   f.update();
 }
 
 void keyPressed() {
-  if (key == 'e') {
+  if (key == 'e' && !Euler_enable) {
     //find the path (cycle) and enable Euler pathfinding animation
     Node st = EulerStart();
     if (st != null) {
@@ -74,11 +77,11 @@ void keyPressed() {
       EulerPath(st);
       Euler_enable = true;
       f.visEdges();
-    }
+    } else 
+      flash = 1;
   } else if (key == DELETE) {
     //delete a node and all involved edges
     Node out = f.active;
-
     if (out != null) {
       f.invNum[out.num] = false;
       f.nodes.remove(out);
