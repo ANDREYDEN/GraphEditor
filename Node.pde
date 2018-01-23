@@ -72,6 +72,7 @@ class Node {
 
     ellipse(pos.x, pos.y, r, r);
     fill(text_col);
+     textSize(text_size);
     text(num, pos.x - text_size/2, pos.y + text_size/4);
   }
 }

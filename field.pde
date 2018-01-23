@@ -1,11 +1,15 @@
 class Field {
+  PVector pos;
+  int a;
   ArrayList<Node> nodes;
   ArrayList<Edge> edges;
   Edge[][] adj;
   Node active, dragged;
   boolean[] invNum;
 
-  Field() {
+  Field(int x, int y, int a) {
+    this.pos = new PVector(x, y);
+    this.a = a;
     nodes = new ArrayList<Node>();
     edges = new ArrayList<Edge>();
     adj = new Edge[maxn][maxn];
@@ -43,14 +47,14 @@ class Field {
     }
   }
 
+  void clearEdgeVisiting() {
+    for (Edge e : edges)
+      e.visited = false;
+  }
+
   void clearNodeUsage() {
     for (Node n : nodes)
       n.used = 0;
-  }
-
-  void visEdges() {
-    for (Edge e : edges)
-      e.visible = true;
   }
 
   void relate() {
@@ -67,31 +71,47 @@ class Field {
     //separate every node from edges
     for (Node n : nodes) {
       //don't let nodes to escape the box
-      if (n.pos.x < n.r)
-        n.pos.x = n.r;
-      if (n.pos.y < n.r)
-        n.pos.y = n.r;
-      if (n.pos.x > W - n.r)
-        n.pos.x = W - n.r;
-      if (n.pos.y > W - n.r)
-        n.pos.y = W - n.r;
+      if (n.pos.x < pos.x + n.r/2)
+        n.pos.x = pos.x + n.r/2;
+      if (n.pos.y < pos.y + n.r/2)
+        n.pos.y = pos.y + n.r/2;
+      if (n.pos.x > pos.x + a - n.r/2)
+        n.pos.x = pos.x + a - n.r/2;
+      if (n.pos.y > pos.y + a - n.r/2)
+        n.pos.y = pos.y + a - n.r/2;
     }
   }
 
   void update() {
-    for (Edge e : edges)
+    noStroke();
+    fill(field_col);
+    rect(pos.x, pos.y, a, a);
+    for (Edge e : edges) {
+      e.move();
       e.show();
+    }
     for (Node n : nodes) {
       n.show();
       n.move();
     }
-    relate();
+    if (physics_enable)
+      relate();
   }
 
-  void consLogEdges() {
-    for (Edge e : edges) 
-      println(e.A.num + " " + e.B.num);  
-    println();
+  boolean bounds(int x, int y) {
+    return (x > pos.x + Node_rad/2 && x < pos.x + a - Node_rad/2 &&
+      y > pos.y + Node_rad/2 && y < pos.y + a - Node_rad/2);
+  }
+
+  void marginLogEdges() {
+    int sz = L_margin/5;
+    int cnt = 1;
+    for (int i = 0; i < maxn; i++) 
+      for (int j = i+1; j < maxn; j++) 
+        if (adj[i][j] != null) {
+        textSize(sz);
+        text(i + " " + j, sz, (cnt++)*sz);
+      }
   }
 
   Node checkOverlap() {

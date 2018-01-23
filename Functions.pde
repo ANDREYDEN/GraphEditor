@@ -32,8 +32,8 @@ Node EulerStart() {
 void EulerPath(Node cur) {
   for (Edge e : f.edges) {
     Node to = other(cur, e);
-    if (to != null && e.visible) {
-      e.visible = false;
+    if (to != null && !e.visited) {
+      e.visited = true;
       EulerPath(to);
     }
   }
@@ -42,11 +42,32 @@ void EulerPath(Node cur) {
 }
 
 void checkFlash() {
- if (flash == 1) {
-      background(flash_col);
-      flash = 2;
+  if (flash == 1) {
+    background(flash_col);
+    flash = 2;
   } else if (flash == 2) {
     flash = 0;
     delay(flash_time);
   }
+}
+
+void marginLogEu() {
+  if (EuAns != null)
+    for (int i = 0; i < EuAns.size()-1; i++) {
+      int from = EuAns.get(i);
+      int to = EuAns.get(i+1);
+      int sz = R_margin/5;
+      textSize(sz);
+      text(from + " " + to, L_margin+W+sz, (i+1)*sz);
+    }
+}
+
+void marginUpdate() {
+  fill(margin_col);
+  noStroke();
+  rect(0, 0, L_margin, W);
+  rect(L_margin+W, 0, R_margin, W);
+  fill(text_col);
+  f.marginLogEdges();
+  marginLogEu();
 }

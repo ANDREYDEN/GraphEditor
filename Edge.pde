@@ -1,13 +1,28 @@
 class Edge {
   int w;
   Node A, B;
-  boolean visible;
+  int direction;
+  float ratio;
+  boolean visited;
 
   Edge(int _w, Node _A, Node _B) {
     w = _w;
     A = _A;
     B = _B;
-    visible = true;
+    direction = 0;
+    ratio = 1;
+    visited = false;
+  }
+
+  void move() {
+    ratio += animation_velocity*direction;  
+    if (ratio > 1) {
+      ratio = 1;
+      direction = 0;
+    } else if (ratio < 0) {
+      ratio = 0;
+      direction = 0;
+    }
   }
 
   void show() {
@@ -17,7 +32,9 @@ class Edge {
     }
     stroke(edge_col);
     strokeWeight(str_weight_edge);
-    if (visible)
-      line(A.pos.x, A.pos.y, B.pos.x, B.pos.y);
+    PVector l = PVector.sub(B.pos, A.pos);
+    l.mult(ratio);
+    PVector end = PVector.add(A.pos, l);
+    line(A.pos.x, A.pos.y, end.x, end.y);
   }
 }
