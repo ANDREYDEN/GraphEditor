@@ -128,8 +128,11 @@ void keyPressed() {
         if (e.A == out || e.B == out)
           removed.add(e);
 
-      for (Edge e : removed)
+      for (Edge e : removed) {
+        f.adj[e.A.num][e.B.num] = null;
+        f.adj[e.B.num][e.A.num] = null;
         f.edges.remove(e);
+      }
     }
   }
 }
