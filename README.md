@@ -1,5 +1,5 @@
 # GraphEditor
-A graph editor in processing with some visual algorithms and physical movement (attraction/repulsion).
+A graph editor in [Processing](https://processing.org/) with some visual algorithms and physical movement (attraction/repulsion).
 
 ## Example
 
