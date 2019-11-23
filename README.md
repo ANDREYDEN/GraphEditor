@@ -16,12 +16,12 @@ All the different releases can be found in the `./releases/<OS>` folder.
 3. **Connect nodes**:
   - select the first node
   - left-click the second node
-3. **Delete a node**: 
+4. **Delete a node**: 
   - select the desired node
   - hit the `del` key
-4. **Delete an edge**: left-click on the edge nodes. Multi edges are not yet supported.
-5. **Show Eulerian path animation**: hit the `e` key (if there is no Eulerian path, the screen will flash red). You can read more about the Eulerian path [here](https://en.wikipedia.org/wiki/Eulerian_path).
-6. **Toggle physics**: press the `Physics` button.
+5. **Delete an edge**: left-click on the edge nodes. Multi edges are not yet supported.
+6. **Show Eulerian path animation**: hit the `e` key (if there is no Eulerian path, the screen will flash red). You can read more about the Eulerian path [here](https://en.wikipedia.org/wiki/Eulerian_path).
+7. **Toggle physics**: press the `Physics` button.
 
 Note: Look out for the active node in order to prevent connecting something accidentally.
 
